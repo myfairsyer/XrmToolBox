@@ -87,6 +87,7 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="PluginCloseInfo.cs" />
+    <Compile Include="PluginMetadata.cs" />
     <Compile Include="PluginNotFoundException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RequestConnectionEventArgs.cs" />

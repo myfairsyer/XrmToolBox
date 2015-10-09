@@ -92,7 +92,7 @@ namespace XrmToolBox
                     var control = parameter.ConnectionParmater as UserControl;
                     if (control != null)
                     {
-                        var pluginModel = control.Tag as Lazy<IXrmToolBoxPlugin, IPluginMetadata>;
+                        var pluginModel = control.Tag as Lazy<IXrmToolBoxPlugin, PluginMetadata>;
                         if (pluginModel == null)
                         {
                             // Actual Plugin was passed, Just update the plugin's Tab.
@@ -314,11 +314,11 @@ namespace XrmToolBox
 
             pManager.Initialize();
 
-            // This code works well as the Metadata are accessed in the container
-            pManager.DoSomething();
+            //// This code works well as the Metadata are accessed in the container
+            //pManager.DoSomething();
 
-            // This code fails
-            string plugins = String.Join(",", pManager.GetPluginMetadata().Select(p => p.Name));
+            //// This code fails
+            //string plugins = String.Join(",", pManager.GetPluginMetadata().Select(p => p.Name));
 
             // MEF
 
@@ -453,7 +453,7 @@ namespace XrmToolBox
             }
             else
             {
-                var plugin = ((UserControl)sender).Tag as Lazy<IXrmToolBoxPlugin, IPluginMetadata>;
+                var plugin = ((UserControl)sender).Tag as Lazy<IXrmToolBoxPlugin, PluginMetadata>;
 
                 if (plugin != null)
                 {
@@ -749,7 +749,7 @@ namespace XrmToolBox
             tab.GetPlugin().UpdateConnection(service, currentConnectionDetail);
 
             tab.Text = string.Format("{0} ({1})",
-                ((Lazy<IXrmToolBoxPlugin, IPluginMetadata>)tab.Tag).Metadata.Name,
+                ((Lazy<IXrmToolBoxPlugin, PluginMetadata>)tab.Tag).Metadata.Name,
                 currentConnectionDetail != null
                     ? currentConnectionDetail.ConnectionName
                     : "Not connected");

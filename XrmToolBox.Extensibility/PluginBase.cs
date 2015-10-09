@@ -1,8 +1,9 @@
-﻿using XrmToolBox.Extensibility.Interfaces;
+﻿using System;
+using XrmToolBox.Extensibility.Interfaces;
 
 namespace XrmToolBox.Extensibility
 {
-    public abstract class PluginBase : IXrmToolBoxPlugin
+    public abstract class PluginBase : MarshalByRefObject, IXrmToolBoxPlugin
     {
         public string GetCompany()
         {

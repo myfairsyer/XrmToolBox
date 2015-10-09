@@ -10,6 +10,7 @@ using System.Text;
 using System.Windows.Forms;
 using XrmToolBox.Extensibility;
 using XrmToolBox.Extensibility.Interfaces;
+using MessageBox = System.Windows.Forms.MessageBox;
 
 namespace XrmToolBox
 {
@@ -30,16 +31,16 @@ namespace XrmToolBox
         public event EventHandler PluginsListUpdated;
 
         [ImportMany(AllowRecomposition = true)]
-        public IEnumerable<Lazy<IXrmToolBoxPlugin, IPluginMetadata>> Plugins { get; set; }
+        public IEnumerable<Lazy<IXrmToolBoxPlugin, PluginMetadata>> Plugins { get; set; }
 
         internal bool HasPlugins { get { return Plugins.Any(); } }
 
-        public List<IPluginMetadata> GetPluginMetadata()
+        public List<PluginMetadata> GetPluginMetadata()
         {
             return Plugins.Select(p => p.Metadata).ToList();
         }
 
-        public IEnumerable<Lazy<IXrmToolBoxPlugin, IPluginMetadata>> GetPlugins()
+        public IEnumerable<Lazy<IXrmToolBoxPlugin, PluginMetadata>> GetPlugins()
         {
             return Plugins;
         }
@@ -49,7 +50,7 @@ namespace XrmToolBox
             try
             {
                 var regBuilder = new RegistrationBuilder();
-                regBuilder.ForTypesDerivedFrom<Lazy<IXrmToolBoxPlugin, IPluginMetadata>>().Export<Lazy<IXrmToolBoxPlugin, IPluginMetadata>>();
+                regBuilder.ForTypesDerivedFrom<Lazy<IXrmToolBoxPlugin, PluginMetadata>>().Export<Lazy<IXrmToolBoxPlugin, PluginMetadata>>();
 
                 var catalog = new AggregateCatalog();
                 catalog.Catalogs.Add(new AssemblyCatalog(typeof(PluginManagerExtended).Assembly, regBuilder));
@@ -59,9 +60,6 @@ namespace XrmToolBox
 
                 container = new CompositionContainer(catalog);
                 container.ComposeParts(this);
-                //container.ComposeExportedValue(container);
-
-                //Plugins = container.GetExportedValues<Lazy<IXrmToolBoxPlugin, IPluginMetadata>>();
             }
             catch (ReflectionTypeLoadException ex)
             {
@@ -88,7 +86,7 @@ namespace XrmToolBox
         {
             directoryCatalog.Refresh();
             container.ComposeParts(directoryCatalog.Parts);
-            Plugins = container.GetExportedValues<Lazy<IXrmToolBoxPlugin, IPluginMetadata>>();
+            Plugins = container.GetExportedValues<Lazy<IXrmToolBoxPlugin, PluginMetadata>>();
         }
 
         internal void DoSomething()
@@ -96,7 +94,7 @@ namespace XrmToolBox
             Plugins.ToList().ForEach(p => MessageBox.Show(p.Metadata.Name));
         }
 
-        internal Lazy<IXrmToolBoxPlugin, IPluginMetadata> GetOnePlugin(string fullname)
+        internal Lazy<IXrmToolBoxPlugin, PluginMetadata> GetOnePlugin(string fullname)
         {
             return Plugins.FirstOrDefault(p => p.Value.GetType().FullName == fullname);
         }

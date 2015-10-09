@@ -22,13 +22,13 @@ namespace XrmToolBox
         /// </summary>
         private readonly List<PluginModel> pluginsModels;
 
-        private void CreateModel<T>(Lazy<IXrmToolBoxPlugin, IPluginMetadata> plugin, ref int top, int width, int count)
+        private void CreateModel<T>(Lazy<IXrmToolBoxPlugin, PluginMetadata> plugin, ref int top, int width, int count)
              where T : PluginModel
         {
             var type = plugin.Value.GetMyType();
             //var pm = (T)pManager.PluginsControls.FirstOrDefault(t => ((Type)t.Tag).FullName == type && t is T);
 
-            var pm = (T)pluginsModels.FirstOrDefault(t => ((Lazy<IXrmToolBoxPlugin, IPluginMetadata>)t.Tag).Value.GetType().FullName == type && t is T);
+            var pm = (T)pluginsModels.FirstOrDefault(t => ((Lazy<IXrmToolBoxPlugin, PluginMetadata>)t.Tag).Value.GetType().FullName == type && t is T);
             var small = (typeof(T) == typeof(SmallPluginModel));
 
             if (pm == null)
@@ -96,7 +96,7 @@ namespace XrmToolBox
             top += pm.Height + 4;
         }
 
-        private void DisplayOnePlugin(Lazy<IXrmToolBoxPlugin, IPluginMetadata> plugin, ref int top, int width, int count = -1)
+        private void DisplayOnePlugin(Lazy<IXrmToolBoxPlugin, PluginMetadata> plugin, ref int top, int width, int count = -1)
         {
             if (currentOptions.DisplayLargeIcons)
             {
@@ -108,7 +108,7 @@ namespace XrmToolBox
             }
         }
 
-        private int DisplayPluginControl(Lazy<IXrmToolBoxPlugin, IPluginMetadata> plugin)
+        private int DisplayPluginControl(Lazy<IXrmToolBoxPlugin, PluginMetadata> plugin)
         {
             var tabIndex = 0;
 
@@ -282,7 +282,7 @@ namespace XrmToolBox
             {
                 HomePageTab.Controls.Clear();
 
-                foreach (PluginModel ctrl in pluginsModels.Where(p => filteredPlugins.Contains(((Lazy<IXrmToolBoxPlugin, IPluginMetadata>)p.Tag).Metadata.Name)))
+                foreach (PluginModel ctrl in pluginsModels.Where(p => filteredPlugins.Contains(((Lazy<IXrmToolBoxPlugin, PluginMetadata>)p.Tag).Value.GetMyType())))
                 //foreach (PluginModel ctrl in pluginsModels)
                 {
                     ctrl.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;

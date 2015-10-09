@@ -8,6 +8,7 @@ using System.Reflection;
 
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using XrmToolBox.Extensibility;
 using XrmToolBox.Extensibility.Interfaces;
 
 namespace XrmToolBox.AppCode
@@ -17,7 +18,7 @@ namespace XrmToolBox.AppCode
     /// </summary>
     public class LogUsage
     {
-        public static async Task DoLog(Lazy<IXrmToolBoxPlugin, IPluginMetadata> plugin)
+        public static async Task DoLog(Lazy<IXrmToolBoxPlugin, PluginMetadata> plugin)
         {
 #if !DEBUG
             try
