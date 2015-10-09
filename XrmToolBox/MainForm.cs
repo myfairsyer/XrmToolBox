@@ -9,6 +9,7 @@ using Microsoft.Xrm.Sdk;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
@@ -31,6 +32,7 @@ namespace XrmToolBox
         private ConnectionDetail currentConnectionDetail;
         private Options currentOptions;
         private string currentReleaseNote;
+        private AppDomain domain;
         private FormHelper fHelper;
         private string initialConnectionName;
         private string initialPluginName;
@@ -281,9 +283,44 @@ namespace XrmToolBox
 
             tstxtFilterPlugin.Focus();
 
-            pManager = new PluginManagerExtended(this);
+            // MEF
+
+            var cachePath = Path.Combine(AppDomain.CurrentDomain.SetupInformation.ApplicationBase,
+                "ShadowCopyCache");
+            var pluginsPath = Path.Combine(AppDomain.CurrentDomain.SetupInformation.ApplicationBase,
+                "Plugins");
+
+            if (!Directory.Exists(cachePath))
+            {
+                Directory.CreateDirectory(cachePath);
+            }
+            if (!Directory.Exists(pluginsPath))
+            {
+                Directory.CreateDirectory(pluginsPath);
+            }
+
+            var setup = new AppDomainSetup
+            {
+                CachePath = cachePath,
+                ShadowCopyFiles = "true",
+                ShadowCopyDirectories = pluginsPath
+            };
+
+            domain = AppDomain.CreateDomain("XrmToolBox_AppDomain", AppDomain.CurrentDomain.Evidence, setup);
+            pManager =
+                (PluginManagerExtended)
+                    domain.CreateInstanceAndUnwrap(typeof(PluginManagerExtended).Assembly.FullName,
+                        typeof(PluginManagerExtended).FullName);
+
             pManager.Initialize();
-            pManager.PluginsListUpdated += pManager_PluginsListUpdated;
+
+            // This code works well as the Metadata are accessed in the container
+            pManager.DoSomething();
+
+            // This code fails
+            string plugins = String.Join(",", pManager.GetPluginMetadata().Select(p => p.Name));
+
+            // MEF
 
             tstxtFilterPlugin.AutoCompleteCustomSource.AddRange(pManager.Plugins.Select(p => p.Metadata.Name).ToArray());
 

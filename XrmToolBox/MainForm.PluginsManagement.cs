@@ -230,7 +230,7 @@ namespace XrmToolBox
 
         private void DisplayPlugins(object filter = null)
         {
-            if (!pManager.Plugins.Any())
+            if (!pManager.HasPlugins)
             {
                 Invoke(new Action(() =>
                 {
@@ -244,26 +244,22 @@ namespace XrmToolBox
             int lastWidth = HomePageTab.Width - 28;
 
             // Search with filter defined
-            var filteredPlugins = (filter != null && filter.ToString().Length > 0
-                ? pManager.Plugins.Where(p
-                    => p.Metadata.Name.ToLower().Contains(filter.ToString().ToLower())
-                    || p.Metadata.Description.ToLower().Contains(filter.ToString().ToLower())
-                    || p.Value.GetType().GetCompany().ToLower().Contains(filter.ToString().ToLower()))
-                : pManager.Plugins).OrderBy(p => p.Metadata.Name).ToList();
+            var filteredPlugins = pManager.GetPluginsNamesByFilter(tstxtFilterPlugin.Text);
 
             if (currentOptions.DisplayMostUsedFirst)
             {
                 foreach (var item in currentOptions.MostUsedList.OrderByDescending(i => i.Count).ThenBy(i => i.Name))
                 {
-                    var plugin = filteredPlugins.FirstOrDefault(x => x.Value.GetType().FullName == item.Name);
+                    var plugin = pManager.GetOnePlugin(item.Name);
                     if (plugin != null && (currentOptions.HiddenPlugins == null || !currentOptions.HiddenPlugins.Contains(plugin.GetType().GetTitle())))
                     {
                         DisplayOnePlugin(plugin, ref top, lastWidth, item.Count);
                     }
                 }
 
-                foreach (var plugin in filteredPlugins.OrderBy(p => p.Metadata.Name))
+                foreach (var item in filteredPlugins.OrderBy(p => p))
                 {
+                    var plugin = pManager.GetOnePlugin(item);
                     if (currentOptions.MostUsedList.All(i => i.Name != plugin.Value.GetType().FullName) && (currentOptions.HiddenPlugins == null || !currentOptions.HiddenPlugins.Contains(plugin.Value.GetType().GetTitle())))
                     {
                         DisplayOnePlugin(plugin, ref top, lastWidth);
@@ -272,8 +268,9 @@ namespace XrmToolBox
             }
             else
             {
-                foreach (var plugin in filteredPlugins.OrderBy(p => p.Metadata.Name))
+                foreach (var item in filteredPlugins.OrderBy(p => p))
                 {
+                    var plugin = pManager.GetOnePlugin(item);
                     if (currentOptions.HiddenPlugins == null || !currentOptions.HiddenPlugins.Contains(plugin.Metadata.Name))
                     {
                         DisplayOnePlugin(plugin, ref top, lastWidth);
@@ -285,7 +282,7 @@ namespace XrmToolBox
             {
                 HomePageTab.Controls.Clear();
 
-                foreach (PluginModel ctrl in pluginsModels.Where(p => filteredPlugins.Contains((Lazy<IXrmToolBoxPlugin, IPluginMetadata>)p.Tag)))
+                foreach (PluginModel ctrl in pluginsModels.Where(p => filteredPlugins.Contains(((Lazy<IXrmToolBoxPlugin, IPluginMetadata>)p.Tag).Metadata.Name)))
                 //foreach (PluginModel ctrl in pluginsModels)
                 {
                     ctrl.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;

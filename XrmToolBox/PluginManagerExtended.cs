@@ -2,10 +2,13 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
+using System.ComponentModel.Composition.Registration;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
+using XrmToolBox.Extensibility;
 using XrmToolBox.Extensibility.Interfaces;
 
 namespace XrmToolBox
@@ -15,20 +18,13 @@ namespace XrmToolBox
         private static readonly string PluginPath = Path.Combine(AppDomain.CurrentDomain.SetupInformation.ApplicationBase, "Plugins");
         private CompositionContainer container;
         private DirectoryCatalog directoryCatalog;
-        private DateTime lastPluginsUpdate;
+
+        public PluginManagerExtended()
+        {
+        }
 
         public PluginManagerExtended(Form parentForm)
         {
-            lastPluginsUpdate = DateTime.Now;
-
-            var watcher = new FileSystemWatcher(PluginPath)
-            {
-                EnableRaisingEvents = true,
-                Filter = "*.dll",
-                NotifyFilter = NotifyFilters.FileName,
-                SynchronizingObject = parentForm
-            };
-            watcher.Created += watcher_EventRaised;
         }
 
         public event EventHandler PluginsListUpdated;
@@ -36,16 +32,36 @@ namespace XrmToolBox
         [ImportMany(AllowRecomposition = true)]
         public IEnumerable<Lazy<IXrmToolBoxPlugin, IPluginMetadata>> Plugins { get; set; }
 
+        internal bool HasPlugins { get { return Plugins.Any(); } }
+
+        public List<IPluginMetadata> GetPluginMetadata()
+        {
+            return Plugins.Select(p => p.Metadata).ToList();
+        }
+
+        public IEnumerable<Lazy<IXrmToolBoxPlugin, IPluginMetadata>> GetPlugins()
+        {
+            return Plugins;
+        }
+
         public void Initialize()
         {
             try
             {
-                directoryCatalog = new DirectoryCatalog(PluginPath);
+                var regBuilder = new RegistrationBuilder();
+                regBuilder.ForTypesDerivedFrom<Lazy<IXrmToolBoxPlugin, IPluginMetadata>>().Export<Lazy<IXrmToolBoxPlugin, IPluginMetadata>>();
 
                 var catalog = new AggregateCatalog();
+                catalog.Catalogs.Add(new AssemblyCatalog(typeof(PluginManagerExtended).Assembly, regBuilder));
+
+                directoryCatalog = new DirectoryCatalog(PluginPath, regBuilder);
                 catalog.Catalogs.Add(directoryCatalog);
+
                 container = new CompositionContainer(catalog);
                 container.ComposeParts(this);
+                //container.ComposeExportedValue(container);
+
+                //Plugins = container.GetExportedValues<Lazy<IXrmToolBoxPlugin, IPluginMetadata>>();
             }
             catch (ReflectionTypeLoadException ex)
             {
@@ -72,20 +88,34 @@ namespace XrmToolBox
         {
             directoryCatalog.Refresh();
             container.ComposeParts(directoryCatalog.Parts);
+            Plugins = container.GetExportedValues<Lazy<IXrmToolBoxPlugin, IPluginMetadata>>();
         }
 
-        private void watcher_EventRaised(object sender, FileSystemEventArgs e)
+        internal void DoSomething()
         {
-            try
-            {
-                ((FileSystemWatcher)sender).EnableRaisingEvents = false;
+            Plugins.ToList().ForEach(p => MessageBox.Show(p.Metadata.Name));
+        }
 
-                PluginsListUpdated(this, new EventArgs());
-            }
-            finally
-            {
-                ((FileSystemWatcher)sender).EnableRaisingEvents = true;
-            }
+        internal Lazy<IXrmToolBoxPlugin, IPluginMetadata> GetOnePlugin(string fullname)
+        {
+            return Plugins.FirstOrDefault(p => p.Value.GetType().FullName == fullname);
+        }
+
+        internal List<string> GetPluginNames()
+        {
+            return Plugins.ToList().Select(p => p.Metadata.Name).ToList();
+        }
+
+        internal List<string> GetPluginsNamesByFilter(string filter)
+        {
+            var filteredPlugins = (filter != null && filter.ToString().Length > 0
+               ? Plugins.Where(p
+                   => p.Metadata.Name.ToLower().Contains(filter.ToString().ToLower())
+                   || p.Metadata.Description.ToLower().Contains(filter.ToString().ToLower())
+                   || p.Value.GetType().GetCompany().ToLower().Contains(filter.ToString().ToLower()))
+               : Plugins).OrderBy(p => p.Metadata.Name).Select(p => p.Value.GetType().FullName).ToList();
+
+            return filteredPlugins;
         }
     }
 }
