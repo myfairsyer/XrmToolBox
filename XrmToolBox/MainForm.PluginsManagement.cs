@@ -139,6 +139,11 @@ namespace XrmToolBox
                 if (snapshotCtrl != null)
                 {
                     snapshotCtrl.SnapshotSent += SnapshotCtrl_SnapshotSent;
+                    tsbSnapshots.Visible = true;
+                }
+                else
+                {
+                    tsbSnapshots.Visible = false;
                 }
 
                 if (service != null)

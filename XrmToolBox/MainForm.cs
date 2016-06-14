@@ -37,7 +37,7 @@ namespace XrmToolBox
         private PluginManagerExtended pManager;
         private IOrganizationService service;
         private SnapshotManager SnapshotManager;
-        private SnapshotsDialog dialog;
+        private SnapshotsDialog snapshotDialog;
 
         protected internal Options Options { get { return currentOptions; } }
 
@@ -501,7 +501,10 @@ namespace XrmToolBox
             {
                 tstxtFilterPlugin.Focus();
 
-                dialog.Plugin = null;
+                if (snapshotDialog != null)
+                {
+                    snapshotDialog.Plugin = null;
+                }
             }
             else
             {
@@ -522,12 +525,12 @@ namespace XrmToolBox
                 }
 
                 // Set snapshot
-                if (dialog != null)
+                if (snapshotDialog != null)
                 {
                     var sControl = control as ISnapshotable;
                     if (sControl != null)
                     {
-                        dialog.Plugin = sControl;
+                        snapshotDialog.Plugin = sControl;
                         tsbSnapshots.Visible = true;
                     }
                     else
@@ -850,8 +853,8 @@ namespace XrmToolBox
 
         private void tsbSnapshots_Click(object sender, EventArgs e)
         {
-            dialog = new SnapshotsDialog(SnapshotManager, (ISnapshotable)(tabControl1.SelectedIndex != 0 ? tabControl1.SelectedTab.Controls[0] : null));
-            dialog.Show();
+            snapshotDialog = new SnapshotsDialog(SnapshotManager, (ISnapshotable)(tabControl1.SelectedIndex != 0 ? tabControl1.SelectedTab.Controls[0] : null));
+            snapshotDialog.Show();
         }
     }
 }
