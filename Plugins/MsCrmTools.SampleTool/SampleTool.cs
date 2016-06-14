@@ -12,7 +12,7 @@ using XrmToolBox.Extensibility.Interfaces;
 
 namespace MsCrmTools.SampleTool
 {
-    public partial class SampleTool : PluginControlBase, IGitHubPlugin, ICodePlexPlugin, IPayPalPlugin, IHelpPlugin, IStatusBarMessenger
+    public partial class SampleTool : PluginControlBase, IGitHubPlugin, ICodePlexPlugin, IPayPalPlugin, IHelpPlugin, IStatusBarMessenger, ISnapshotable
     {
         #region Base tool implementation
 
@@ -21,8 +21,7 @@ namespace MsCrmTools.SampleTool
             InitializeComponent();
         }
 
-        public event EventHandler<StatusBarMessageEventArgs> SendMessageToStatusBar;
-
+       
         public void ProcessWhoAmI()
         {
             bool isMultipleCallChecked = cbMultipleCalls.Checked;
@@ -79,6 +78,17 @@ namespace MsCrmTools.SampleTool
         private void BtnWhoAmIClick(object sender, EventArgs e)
         {
             ExecuteMethod(ProcessWhoAmI);
+
+            if(SnapshotSent != null)
+            {
+                SnapshotSent(this, new SnapshotEventArgs("You requested a WhoAmI call", DateTime.Now));
+            }
+        }
+        private void btnCancel_Click(object sender, EventArgs e)
+        {
+            CancelWorker();
+
+            MessageBox.Show("Cancelled");
         }
 
         #endregion Base tool implementation
@@ -129,11 +139,22 @@ namespace MsCrmTools.SampleTool
 
         #endregion Help implementation
 
-        private void btnCancel_Click(object sender, EventArgs e)
-        {
-            CancelWorker();
+        #region StatusBarMessenger implementation
 
-            MessageBox.Show("Cancelled");
+        public event EventHandler<StatusBarMessageEventArgs> SendMessageToStatusBar;
+
+        #endregion
+
+        #region Snapshot implementation
+
+        public event EventHandler<SnapshotEventArgs> SnapshotSent;
+
+        public void RestoreSnapshot(object snapshotData)
+        {
+            var sd = (Snapshot)snapshotData;
+            MessageBox.Show("You requested to restore an item snapshoted at " + ((DateTime)sd.Data).ToString());
         }
+
+        #endregion
     }
 }

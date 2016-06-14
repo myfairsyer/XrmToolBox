@@ -36,6 +36,8 @@ namespace XrmToolBox
         private List<PluginControlStatus> pluginControlStatuses;
         private PluginManagerExtended pManager;
         private IOrganizationService service;
+        private SnapshotManager SnapshotManager;
+        private SnapshotsDialog dialog;
 
         protected internal Options Options { get { return currentOptions; } }
 
@@ -56,6 +58,7 @@ namespace XrmToolBox
 
             InitializeComponent();
 
+            SnapshotManager = new SnapshotManager();
             pluginsModels = new List<PluginModel>();
             pluginControlStatuses = new List<PluginControlStatus>();
             ProcessMenuItemsForPlugin();
@@ -257,7 +260,7 @@ namespace XrmToolBox
                                 graphics.DrawString(text, arialFont, Brushes.Black, location);
                             }
                         }
-                        
+
                         tsbPlugins.Image = image;
 
                         tsbPlugins.ToolTipText = string.Format("{0} new plugins\r\n{1} plugins updates",
@@ -497,11 +500,15 @@ namespace XrmToolBox
             if (tabControl1.SelectedIndex == 0)
             {
                 tstxtFilterPlugin.Focus();
+
+                dialog.Plugin = null;
             }
             else
             {
                 var control = (IXrmToolBoxPluginControl)tabControl1.SelectedTab.Controls[0];
                 ((UserControl)control).Focus();
+
+                // Set Statusbar 
                 var currentPluginStatus = pluginControlStatuses.FirstOrDefault(pcs => pcs.Control == control);
                 if (currentPluginStatus == null)
                 {
@@ -512,6 +519,16 @@ namespace XrmToolBox
                 {
                     ccsb.SetMessage(currentPluginStatus.Message);
                     ccsb.SetProgress(currentPluginStatus.Percentage);
+                }
+
+                // Set snapshot
+                if (dialog != null)
+                {
+                    var sControl = control as ISnapshotable;
+                    if (sControl != null)
+                    {
+                        dialog.Plugin = sControl;
+                    }
                 }
             }
         }
@@ -621,6 +638,12 @@ namespace XrmToolBox
             if (plugin == null)
             {
                 return;
+            }
+
+            var sCtrl = plugin as ISnapshotable;
+            if (sCtrl != null)
+            {
+                SnapshotManager.ClearPluginSnapshots(sCtrl);
             }
 
             plugin.Dispose();
@@ -818,6 +841,12 @@ namespace XrmToolBox
         {
             var dialog = new PluginsChecker();
             dialog.ShowDialog(this);
+        }
+
+        private void tsbSnapshots_Click(object sender, EventArgs e)
+        {
+            dialog = new SnapshotsDialog(SnapshotManager, (ISnapshotable)(tabControl1.SelectedIndex != 0 ? tabControl1.SelectedTab.Controls[0] : null));
+            dialog.Show();
         }
     }
 }

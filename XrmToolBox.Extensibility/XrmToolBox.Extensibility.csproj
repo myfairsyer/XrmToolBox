@@ -121,6 +121,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Args\SnapshotAddedEventArgs.cs" />
+    <Compile Include="Args\SnapshotEventArgs.cs" />
     <Compile Include="Args\StatusBarMessageEventArgs.cs" />
     <Compile Include="Extensions.cs">
       <SubType>Code</SubType>
@@ -131,6 +133,7 @@
     <Compile Include="Interfaces\IGitHubPlugin.cs" />
     <Compile Include="Interfaces\IHelpPlugin.cs" />
     <Compile Include="Interfaces\IMessageBusHost.cs" />
+    <Compile Include="Interfaces\ISnapshotable.cs" />
     <Compile Include="Interfaces\IStatusBarMessenger.cs" />
     <Compile Include="Interfaces\IStatusBarMessager.cs" />
     <Compile Include="Interfaces\IXrmToolBoxPluginControl.cs" />
@@ -147,6 +150,8 @@
     <Compile Include="PluginNotFoundException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Args\RequestConnectionEventArgs.cs" />
+    <Compile Include="Snapshots\Snapshot.cs" />
+    <Compile Include="Snapshots\SnapshotManager.cs" />
     <Compile Include="UserControls\LargePluginModel.cs">
       <SubType>UserControl</SubType>
     </Compile>

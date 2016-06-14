@@ -203,6 +203,12 @@
     <Compile Include="Forms\PluginsChecker.Designer.cs">
       <DependentUpon>PluginsChecker.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\SnapshotsDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\SnapshotsDialog.designer.cs">
+      <DependentUpon>SnapshotsDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\WelcomeDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -260,6 +266,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\PluginsChecker.resx">
       <DependentUpon>PluginsChecker.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\SnapshotsDialog.resx">
+      <DependentUpon>SnapshotsDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\SupportScreen.resx">
       <DependentUpon>SupportScreen.cs</DependentUpon>
@@ -335,7 +344,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_ConfigurationName="Release" BuildVersion_BuildVersioningStyle="None.YearStamp.MonthStamp.DayStamp" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" />
+      <UserProperties BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_BuildVersioningStyle="None.YearStamp.MonthStamp.DayStamp" BuildVersion_ConfigurationName="Release" />
     </VisualStudio>
   </ProjectExtensions>
   <PropertyGroup>

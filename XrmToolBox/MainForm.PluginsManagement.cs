@@ -135,6 +135,12 @@ namespace XrmToolBox
                     statusBarMessager.SendMessageToStatusBar += StatusBarMessager_SendMessageToStatusBar;
                 }
 
+                var snapshotCtrl = pluginControl as ISnapshotable;
+                if (snapshotCtrl != null)
+                {
+                    snapshotCtrl.SnapshotSent += SnapshotCtrl_SnapshotSent;
+                }
+
                 if (service != null)
                 {
                     var clonedService = currentConnectionDetail.GetCrmServiceClient().OrganizationServiceProxy;
@@ -230,6 +236,16 @@ namespace XrmToolBox
             }
 
             return tabIndex;
+        }
+
+        private void SnapshotCtrl_SnapshotSent(object sender, SnapshotEventArgs e)
+        {
+            SnapshotManager.AddSnapShot(new Snapshot
+            {
+                Data = e.SnapshotData,
+                Message = e.Description,
+                Plugin = (IXrmToolBoxPluginControl)sender
+            });
         }
 
         private void DisplayPlugins(object filter = null)
