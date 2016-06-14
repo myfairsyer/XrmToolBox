@@ -43,6 +43,7 @@ namespace XrmToolBox
             this.closeAllTabsExceptActiveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tsbOptions = new System.Windows.Forms.ToolStripButton();
             this.tsbPlugins = new System.Windows.Forms.ToolStripButton();
+            this.tsbSnapshots = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.tslFilterPlugin = new System.Windows.Forms.ToolStripLabel();
             this.tstxtFilterPlugin = new System.Windows.Forms.ToolStripTextBox();
@@ -95,6 +96,7 @@ namespace XrmToolBox
             this.tsbManageTabs,
             this.tsbOptions,
             this.tsbPlugins,
+            this.tsbSnapshots,
             this.toolStripSeparator1,
             this.tslFilterPlugin,
             this.tstxtFilterPlugin,
@@ -191,6 +193,16 @@ namespace XrmToolBox
             this.tsbPlugins.Text = "Plugins store";
             this.tsbPlugins.Click += new System.EventHandler(this.tsbPlugins_Click);
             // 
+            // tsbSnapshots
+            // 
+            this.tsbSnapshots.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsbSnapshots.Image = ((System.Drawing.Image)(resources.GetObject("tsbSnapshots.Image")));
+            this.tsbSnapshots.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbSnapshots.Name = "tsbSnapshots";
+            this.tsbSnapshots.Size = new System.Drawing.Size(28, 29);
+            this.tsbSnapshots.Text = "Snapshot history";
+            this.tsbSnapshots.Click += new System.EventHandler(this.tsbSnapshots_Click);
+            // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
@@ -219,6 +231,7 @@ namespace XrmToolBox
             // 
             // tsbHelp
             // 
+            this.tsbHelp.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.tsbHelp.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.displayXrmToolBoxHelpToolStripMenuItem,
             this.xrmToolBoxHelpToolStripMenuItem,
@@ -227,7 +240,7 @@ namespace XrmToolBox
             this.tsbHelp.Image = ((System.Drawing.Image)(resources.GetObject("tsbHelp.Image")));
             this.tsbHelp.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tsbHelp.Name = "tsbHelp";
-            this.tsbHelp.Size = new System.Drawing.Size(91, 29);
+            this.tsbHelp.Size = new System.Drawing.Size(42, 29);
             this.tsbHelp.Text = "Help";
             // 
             // displayXrmToolBoxHelpToolStripMenuItem
@@ -581,6 +594,7 @@ namespace XrmToolBox
         private System.Windows.Forms.ToolStripMenuItem aboutXrmToolBoxToolStripMenuItem;
         private System.Windows.Forms.ToolStripButton tsbPlugins;
         private System.Windows.Forms.ImageList pluginsCheckerImageList;
+        private System.Windows.Forms.ToolStripButton tsbSnapshots;
     }
 }
 

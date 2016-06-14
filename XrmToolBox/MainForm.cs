@@ -528,6 +528,11 @@ namespace XrmToolBox
                     if (sControl != null)
                     {
                         dialog.Plugin = sControl;
+                        tsbSnapshots.Visible = true;
+                    }
+                    else
+                    {
+                        tsbSnapshots.Visible = false;
                     }
                 }
             }
