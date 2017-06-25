@@ -9,6 +9,8 @@ XrmToolBox is an application that can connect to Microsoft Dynamics CRM 2011, 20
 
 One of the great point about XrmToolBox is its capability to welcome external plugins written by other developers, just by implementing specific part of XrmToolBox code.
 
+And for testing purposes this arbitrary paragraph has been added.
+
 # Documentation
 The documentation is available through the wiki of XrmToolBox Github's repository. You will find information about prerequisites, list of existing plugins, help on how to connect to your Microsoft Dynamics CRM deployment and much more…
 If you feel you can contribute to this documentation, please create a Github account and help me to fill the wiki with as much interesting content as possible.
